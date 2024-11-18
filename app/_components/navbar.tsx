@@ -44,7 +44,7 @@ const NavBar = () => {
         </Link>
       </div>
       {/* //{DIREITA} */}
-      <UserButton showName />;
+      <UserButton showName />
     </nav>
   );
 };
