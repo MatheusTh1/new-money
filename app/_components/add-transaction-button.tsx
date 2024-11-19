@@ -11,7 +11,8 @@ const AddTransactionButton = () => {
   return (
     <>
       <Button
-        className="rounded-full font-bold"
+        className="rounded-full font-bold bg-cyan-700 hover:bg-primary 
+        "
         onClick={() => setDialogIsOpen(true)}
       >
         Adicionar transação

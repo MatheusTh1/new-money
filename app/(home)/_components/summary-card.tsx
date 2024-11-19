@@ -16,7 +16,8 @@ const SummaryCard = ({
   size = "small",
 }: SummaryCardProps) => {
   return (
-    <Card>
+    // cards principais da tela principal dashboard
+    <Card className=" bg-gradient-to-bl from-cyan-900 to-gray-900">
       <CardHeader className="flex-row items-center gap-4">
         {icon}
         <p
