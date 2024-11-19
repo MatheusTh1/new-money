@@ -7,12 +7,24 @@ import {
 import SummaryCard from "./summary-card";
 import { db } from "@/app/_lib/prisma";
 
-const SummaryCards = async () => {
-  // pegando os valores do banco de dados
+interface SummaryCards {
+  month: string;
+}
+
+const SummaryCards = async ({ month }: SummaryCards) => {
+  // construção do where para filtrar as transações do mês
+  const where = {
+    date: {
+      gte: new Date(`2024-${month}-01`),
+      lte: new Date(`2024-${month}-31`),
+    },
+  };
+
+  // pegando os valores do banco de dados para cada categoria
   const depositTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { type: "DEPOSIT" },
+        where: { ...where, type: "DEPOSIT" },
         _sum: { amount: true },
       })
     )?._sum?.amount,
@@ -20,7 +32,7 @@ const SummaryCards = async () => {
   const investimentsTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { type: "INVESTMENT" },
+        where: { ...where, type: "INVESTMENT" },
         _sum: { amount: true },
       })
     )?._sum?.amount,
@@ -29,14 +41,16 @@ const SummaryCards = async () => {
   const expensiveTotal = Number(
     (
       await db.transaction.aggregate({
-        where: { type: "EXPENSE" },
+        where: { ...where, type: "EXPENSE" },
         _sum: { amount: true },
       })
     )?._sum?.amount,
   );
 
+  // calculando o saldo final com base nas transações do mês
   const balance = depositTotal - investimentsTotal - expensiveTotal;
 
+  // renderizando os cards com os valores obtidos do banco de dados
   return (
     <div className="space-y-6">
       {/* //   {PRIMEIRO CARD} */}
