@@ -4,6 +4,8 @@ import Navbar from "../_components/navbar";
 import SummaryCards from "./_components/summary-cards";
 import TimeSelect from "./_components/time-select";
 import { isMatch } from "date-fns";
+import TransacionPieChart from "./_components/transactions-pie-chart";
+import { getDashboard } from "../_data/get-dashboard";
 
 // Definir o tipo de dados que o componente Home espera receber
 interface HomeProps {
@@ -25,6 +27,8 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
     redirect(`/?month=${currentMonth}`);
   }
 
+  const dashboard = await getDashboard(month);
+
   // Acessar os dados do banco de dados e renderizar o dashboard
   return (
     <>
@@ -34,10 +38,16 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
           <h1 className="text-2xl font-bold">Dashboard </h1>
           <TimeSelect />
         </div>
-        <div className="grid grid-cols-[2fr,1fr] gap-4">
-          <SummaryCards month={month} />
+
+        {/* <div className="grid grid-cols-[2fr,1fr] gap-4"> */}
+        <SummaryCards month={month} {...dashboard} />
+
+        {/* Grafico de pizza */}
+        <div className="grid grid-cols-3 grid-rows-1 gap-6">
+          <TransacionPieChart {...dashboard} />
         </div>
       </div>
+      {/* </div> */}
     </>
   );
 };
