@@ -1,4 +1,6 @@
 import { db } from "@/app/_lib/prisma";
+import { TransactionType } from "@prisma/client";
+import { TransactionPercentagePerType } from "./type";
 
 // Função assíncrona para pegar os dados do banco de dados QUERIES
 export const getDashboard = async (month: string) => {
@@ -39,5 +41,36 @@ export const getDashboard = async (month: string) => {
 
   // calculando o saldo final com base nas transações do mês
   const balance = depositsTotal - investmentsTotal - expensesTotal;
-  return { depositsTotal, investmentsTotal, expensesTotal, balance };
+
+  // pegando o total de transações do mês
+  const transactionsTotal = Number(
+    (
+      await db.transaction.aggregate({
+        where,
+        _sum: { amount: true },
+      })
+    )._sum.amount || 0,
+  );
+
+  // pegando o total de transações do mês e a porcentagem de cada categoria e removendo os numeros decimais
+  const typesPercentages: TransactionPercentagePerType = {
+    [TransactionType.DEPOSIT]: transactionsTotal
+      ? Math.round((Number(depositsTotal || 0) / transactionsTotal) * 100)
+      : 0,
+    [TransactionType.INVESTMENT]: transactionsTotal
+      ? Math.round((Number(investmentsTotal || 0) / transactionsTotal) * 100)
+      : 0,
+    [TransactionType.EXPENSE]: transactionsTotal
+      ? Math.round((Number(expensesTotal || 0) / transactionsTotal) * 100)
+      : 0,
+  };
+
+  // retornando os dados do banco de dados
+  return {
+    depositsTotal,
+    investmentsTotal,
+    expensesTotal,
+    balance,
+    typesPercentages,
+  };
 };
