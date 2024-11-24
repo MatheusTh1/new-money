@@ -1,6 +1,11 @@
 "use client";
 
-import { TrendingUp, TrendingUpIcon } from "lucide-react";
+import {
+  PiggyBankIcon,
+  TrendingDownIcon,
+  TrendingUp,
+  TrendingUpIcon,
+} from "lucide-react";
 import { Pie, PieChart } from "recharts";
 
 import {
@@ -18,6 +23,7 @@ import {
 } from "@/app/_components/ui/chart";
 import { TransactionType } from "@prisma/client";
 import { TransactionPercentagePerType } from "@/app/_data/get-dashboard/type";
+import PercentageItems from "./percentage-items";
 
 const chartConfig = {
   [TransactionType.INVESTMENT]: {
@@ -95,17 +101,26 @@ const TransacionPieChart = ({
           {/* porcentagem das transações por categoria no gráfico */}
         </ChartContainer>
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            {/* {ICONE} */}
-            <div className="flex items-center gap-2">
-              <TrendingUpIcon size={16} className="text-primary" />
-              <p className="text-sm text-muted-foreground">Receita</p>
-            </div>
-            {/* Verifique se `typesPercentage` está carregado */}
-          </div>
-          <p className="text-sm font-bold ">
-            {typesPercentages?.[TransactionType.DEPOSIT] ?? "N/A"} %
-          </p>
+          {/* Receitas  */}
+          <PercentageItems
+            icon={<TrendingUpIcon size={16} className="text-primary" />}
+            title="Receitas"
+            value={typesPercentages[TransactionType.DEPOSIT]}
+          />
+
+          {/* Despesas  */}
+          <PercentageItems
+            icon={<TrendingDownIcon size={16} className="text-danger" />}
+            title="Despesas"
+            value={typesPercentages[TransactionType.EXPENSE]}
+          />
+
+          {/* Investimentos  */}
+          <PercentageItems
+            icon={<PiggyBankIcon size={16} className="text-blue-700" />}
+            title="Investimentos"
+            value={typesPercentages[TransactionType.INVESTMENT]}
+          />
         </div>
       </CardContent>
     </Card>
